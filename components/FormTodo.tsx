@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import TodoContext from '../context/TodoContext';
 import styled from 'styled-components';
-
-type FormProps = {
-    handleSubmit: (data: any) => void;
-};
 
 const Input = styled.input`
     flex-grow: 1;
@@ -51,7 +48,8 @@ const Button = styled.button`
     }
 `;
 
-function FormTodo(props: FormProps): JSX.Element {
+function FormTodo(): JSX.Element {
+    const store = useContext(TodoContext);
     const [todo, setTodo] = useState('');
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,10 +58,7 @@ function FormTodo(props: FormProps): JSX.Element {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        props.handleSubmit({
-            description: todo,
-            isCompleted: false,
-        });
+        store.create(todo);
         setTodo('');
     };
 

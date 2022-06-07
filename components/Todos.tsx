@@ -1,12 +1,15 @@
-import React from 'react';
-import Todo, { TodoProps } from './Todo';
+import React, { useContext } from 'react';
+import Todo from './Todo';
+import TodoContext from '../context/TodoContext';
 
-type TodosProps = {
-    todos: TodoProps[];
-};
+function Todos(): JSX.Element {
+    const store = useContext(TodoContext);
 
-function Todos(props: TodosProps): JSX.Element {
-    const todos = props.todos.map((todo) => <Todo key={todo.id} {...todo} />);
+    const todos = Object.keys(store.todos).map((key) => {
+        const todo = store.todos[key];
+        return <Todo key={todo.uid} {...todo} />;
+    });
+
     return <>{todos}</>;
 }
 

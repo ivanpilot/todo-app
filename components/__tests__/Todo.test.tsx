@@ -1,58 +1,73 @@
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Todo from '../Todo';
+import TodoContext from '../../context/TodoContext';
+
+function render(ui: JSX.Element, store = {}) {
+    return rtlRender(
+        <TodoContext.Provider value={store}>{ui}</TodoContext.Provider>,
+    );
+}
 
 describe('Todo', () => {
     const props = {
-        id: '1',
+        uid: '1',
         description: 'workout',
         isCompleted: false,
     };
+
+    const store = {
+        create: jest.fn(),
+        remove: jest.fn(),
+        update: jest.fn(),
+        todos: { [props.uid]: props },
+    };
+
     it('should render a todo', () => {
         render(<Todo {...props} />);
         const checkbox = screen.getByRole('checkbox');
-        const todo = screen.getByPlaceholderText(props.description);
+        const input = screen.getByRole('input');
         const trashIcon = screen.getByRole('button');
 
         expect(checkbox).toBeInTheDocument();
-        expect(todo).toBeInTheDocument();
-        expect(todo).toHaveProperty('disabled', false);
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveProperty('disabled', false);
         expect(trashIcon).toBeInTheDocument();
     });
 
     it('should update the description of a todo', async () => {
         const updatedDescription = 'should rest';
-        render(<Todo {...props} />);
+        render(<Todo {...props} />, store);
 
-        const todo = screen.getByPlaceholderText(props.description);
-        await userEvent.click(todo);
-        await userEvent.clear(todo);
-        await userEvent.type(todo, updatedDescription);
+        const input = screen.getByRole('input');
+        await userEvent.click(input);
+        await userEvent.clear(input);
+        await userEvent.type(input, updatedDescription);
 
         expect(
-            screen.getByPlaceholderText(updatedDescription),
+            screen.getByDisplayValue(updatedDescription),
         ).toBeInTheDocument();
-        // check when calling dispatch
+        //should test when user focus out
     });
 
-    it('should mark the the todo as completed', async () => {
-        render(<Todo {...props} />);
+    it('should mark the the todo as completed by clicking on the checkbox', async () => {
+        render(<Todo {...props} />, store);
 
         const checkbox = screen.getByRole('checkbox');
         await userEvent.click(checkbox);
-        const todo = screen.getByPlaceholderText(props.description);
-        expect(todo).toHaveProperty('disabled', true);
-        // check when calling dispatch
+        const input = screen.getByRole('input');
+        expect(input).toHaveProperty('disabled', true);
+        expect(store.update).toHaveBeenCalledTimes(1);
+        expect(store.update).toHaveBeenCalledWith(props);
     });
 
     it('should remove a todo from the list', async () => {
-        render(<Todo {...props} />);
+        render(<Todo {...props} />, store);
 
         const trashIcon = screen.getByRole('button');
         await userEvent.click(trashIcon);
-        // use Query since it is expected to be null
-        const todo = screen.queryByPlaceholderText(props.description);
-        expect(todo).toBeNull();
-        // check when calling dispatch
+        // testing the call to remove as should test the absence of the component from another component
+        expect(store.remove).toHaveBeenCalledTimes(1);
+        expect(store.remove).toHaveBeenCalledWith(props.uid);
     });
 });

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import TodoContext from '../context/TodoContext';
 import styled from 'styled-components';
 
 export type TodoProps = {
     id?: string | number;
+    uid: string;
     description: string;
     isCompleted: boolean;
 };
@@ -52,23 +54,34 @@ const Button = styled.button`
 `;
 
 function Todo(props: TodoProps): JSX.Element {
-    const [todo, setTodo] = useState(props);
+    const store = useContext(TodoContext);
+    const [todo, setTodo] = useState<TodoProps>(props);
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTodo({ ...todo, description: e.target.value });
+        setTodo({
+            ...todo,
+            description: e.target.value,
+        });
     };
 
     const handleOnBlur = () => {
-        console.log('UPDATE todo', todo);
+        if (todo.description === '') {
+            setTodo({
+                ...todo,
+                description: props.description,
+            });
+        } else {
+            store.update(todo);
+        }
     };
 
     const handleOnClick = () => {
         setTodo({ ...todo, isCompleted: !todo.isCompleted });
-        console.log('UPDATE todo', todo);
+        store.update(todo);
     };
 
     const handleDelete = () => {
-        console.log('DELETE todo', todo);
+        store.remove(todo.uid);
     };
 
     return (
@@ -78,7 +91,7 @@ function Todo(props: TodoProps): JSX.Element {
             </Label>
             <InputWrapper>
                 <Input
-                    placeholder={todo.description}
+                    role="input"
                     onChange={handleOnChange}
                     value={todo.description}
                     onBlur={handleOnBlur}

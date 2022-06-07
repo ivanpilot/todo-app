@@ -6,6 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
+        "dev:app": "docker-compose down && docker-compose up",
         "check-types": "tsc",
         "lint": "next lint --ignore-path .gitignore",
         "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx)\"",
@@ -13,6 +14,7 @@
         "test": "jest --watch"
     },
     "dependencies": {
+        "@prisma/client": "^3.14.0",
         "next": "12.1.6",
         "react": "18.1.0",
         "react-dom": "18.1.0",
@@ -39,6 +41,7 @@
         "jest-environment-jsdom": "^28.1.0",
         "lint-staged": "^13.0.0",
         "prettier": "^2.6.2",
+        "prisma": "^3.14.0",
         "typescript": "4.7.3"
     }
 }

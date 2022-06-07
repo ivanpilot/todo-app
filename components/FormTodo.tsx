@@ -63,7 +63,6 @@ function FormTodo(props: FormProps): JSX.Element {
         props.handleSubmit({
             description: todo,
             isCompleted: false,
-            isEditing: false,
         });
         setTodo('');
     };

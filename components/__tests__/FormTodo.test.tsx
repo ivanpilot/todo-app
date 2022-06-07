@@ -34,7 +34,6 @@ describe('FormTodo', () => {
         const output = {
             description: 'must work out',
             isCompleted: false,
-            isEditing: false,
         };
         const onSubmitMock = jest.fn();
         render(<FormTodo handleSubmit={onSubmitMock} />);

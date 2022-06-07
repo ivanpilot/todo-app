@@ -58,8 +58,6 @@ function Home(): JSX.Element {
         setTodos([...todos, { id: todos.length + 1, ...todo }]);
     };
 
-    console.log('todos >>>> ', todos);
-
     return (
         <Container>
             <H1>Task List</H1>

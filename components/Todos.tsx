@@ -6,10 +6,8 @@ type TodosProps = {
 };
 
 function Todos(props: TodosProps): JSX.Element {
-    console.log('[ Todos ] props ', props);
-
     const todos = props.todos.map((todo) => <Todo key={todo.id} {...todo} />);
-    return <ul>{todos}</ul>;
+    return <>{todos}</>;
 }
 
 export default Todos;

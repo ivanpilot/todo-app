@@ -6,7 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "dev:app": "docker-compose down --remove-orphans && docker-compose -f ./docker-compose.yml up --build",
+        "docker": "docker-compose down --remove-orphans && docker-compose -f ./docker-compose.yml up --build",
         "check-types": "tsc",
         "lint": "next lint --ignore-path .gitignore",
         "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx)\"",

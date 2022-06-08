@@ -21,7 +21,7 @@ const Query = {
 const Mutation = {
     createTodo: async (
         parent: undefined,
-        args: { sic: string; description: string; isCompleted: boolean },
+        args: { description: string; isCompleted: boolean },
         ctx: { prisma: PrismaClient },
     ) => {
         try {
@@ -37,7 +37,6 @@ const Mutation = {
         parent: undefined,
         args: {
             id: number;
-            sic: string;
             description: string;
             isCompleted: boolean;
         },

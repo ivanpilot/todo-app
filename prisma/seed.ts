@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { todos } from '../data';
+import { todos } from './data';
 
 const prisma = new PrismaClient();
 

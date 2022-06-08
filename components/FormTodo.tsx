@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { v4 as uuidv4 } from 'uuid';
 import styled from 'styled-components';
 import { GET_TODOS } from '../graphql/queries';
 import { CREATE_TODO } from '../graphql/mutations';
@@ -20,7 +19,6 @@ function FormTodo(): JSX.Element {
         e.preventDefault();
         createTodo({
             variables: {
-                sic: uuidv4(),
                 description: todo,
                 isCompleted: false,
             },

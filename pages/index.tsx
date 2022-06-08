@@ -2,7 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import FormTodo from '../components/FormTodo';
 import Todos from '../components/Todos';
-import { TodoProvider } from '../context/TodoContext';
+
+function Home(): JSX.Element {
+    return (
+        <Container>
+            <H1>Task List</H1>
+            <Wrapper>
+                <FormTodo />
+                <Todos />
+            </Wrapper>
+        </Container>
+    );
+}
 
 const Container = styled.div`
     display: flex;
@@ -25,19 +36,5 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
 `;
-
-function Home(): JSX.Element {
-    return (
-        <TodoProvider>
-            <Container>
-                <H1>Task List</H1>
-                <Wrapper>
-                    <FormTodo />
-                    <Todos />
-                </Wrapper>
-            </Container>
-        </TodoProvider>
-    );
-}
 
 export default Home;

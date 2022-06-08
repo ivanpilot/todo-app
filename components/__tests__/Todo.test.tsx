@@ -11,7 +11,7 @@ function render(ui: JSX.Element, store = {}) {
 
 describe('Todo', () => {
     const props = {
-        uid: '1',
+        sic: '1',
         description: 'workout',
         isCompleted: false,
     };
@@ -20,7 +20,7 @@ describe('Todo', () => {
         create: jest.fn(),
         remove: jest.fn(),
         update: jest.fn(),
-        todos: { [props.uid]: props },
+        todos: { [props.sic]: props },
     };
 
     it('should render a todo', () => {
@@ -68,6 +68,6 @@ describe('Todo', () => {
         await userEvent.click(trashIcon);
         // testing the call to remove as should test the absence of the component from another component
         expect(store.remove).toHaveBeenCalledTimes(1);
-        expect(store.remove).toHaveBeenCalledWith(props.uid);
+        expect(store.remove).toHaveBeenCalledWith(props.sic);
     });
 });

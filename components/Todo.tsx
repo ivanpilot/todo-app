@@ -1,13 +1,76 @@
-import React, { useContext, useState } from 'react';
-import TodoContext from '../context/TodoContext';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
+import { GET_TODOS } from '../graphql/queries';
+import { UPDATE_TODO, DELETE_TODO } from '../graphql/mutations';
+import { ITodoFull } from '../interfaces';
 
-export type TodoProps = {
-    id?: string | number;
-    uid: string;
-    description: string;
-    isCompleted: boolean;
-};
+function Todo(props: ITodoFull): JSX.Element {
+    const [updateTodo] = useMutation(UPDATE_TODO);
+    const [deleteTodo] = useMutation(DELETE_TODO, {
+        refetchQueries: [{ query: GET_TODOS }],
+    });
+
+    const [todo, setTodo] = useState<ITodoFull>(props);
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTodo({
+            ...todo,
+            description: e.target.value,
+        });
+    };
+
+    const handleOnBlur = () => {
+        if (todo.description === '') {
+            setTodo({
+                ...todo,
+                description: props.description,
+            });
+        } else {
+            updateTodo({
+                variables: todo,
+            });
+        }
+    };
+
+    const handleOnClick = () => {
+        const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
+        updateTodo({
+            variables: updatedTodo,
+        });
+        setTodo(updatedTodo);
+    };
+
+    const handleDelete = () => {
+        deleteTodo({
+            variables: { id: todo.id },
+        });
+    };
+
+    return (
+        <Wrapper>
+            <Label>
+                <input
+                    type="checkbox"
+                    onClick={handleOnClick}
+                    defaultChecked={todo.isCompleted}
+                />
+            </Label>
+            <InputWrapper>
+                <Input
+                    role="input"
+                    onChange={handleOnChange}
+                    value={todo.description}
+                    onBlur={handleOnBlur}
+                    disabled={todo.isCompleted}
+                />
+            </InputWrapper>
+            <Button onClick={handleDelete}>
+                <i className="fa fa-trash" aria-hidden="true"></i>
+            </Button>
+        </Wrapper>
+    );
+}
 
 const Wrapper = styled.div`
     display: flex;
@@ -52,57 +115,5 @@ const Button = styled.button`
     background: none;
     cursor: pointer;
 `;
-
-function Todo(props: TodoProps): JSX.Element {
-    const store = useContext(TodoContext);
-    const [todo, setTodo] = useState<TodoProps>(props);
-
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTodo({
-            ...todo,
-            description: e.target.value,
-        });
-    };
-
-    const handleOnBlur = () => {
-        if (todo.description === '') {
-            setTodo({
-                ...todo,
-                description: props.description,
-            });
-        } else {
-            store.update(todo);
-        }
-    };
-
-    const handleOnClick = () => {
-        setTodo({ ...todo, isCompleted: !todo.isCompleted });
-        store.update(todo);
-    };
-
-    const handleDelete = () => {
-        store.remove(todo.uid);
-    };
-
-    return (
-        <Wrapper>
-            <Label>
-                <input type="checkbox" onClick={handleOnClick} />
-            </Label>
-            <InputWrapper>
-                <Input
-                    role="input"
-                    onChange={handleOnChange}
-                    value={todo.description}
-                    onBlur={handleOnBlur}
-                    disabled={todo.isCompleted}
-                />
-            </InputWrapper>
-            <Button onClick={handleDelete}>
-                <i className="fa fa-trash" aria-hidden="true"></i>
-            </Button>
-        </Wrapper>
-    );
-}
 
 export default Todo;

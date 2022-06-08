@@ -44,7 +44,7 @@ describe('FormTodo', () => {
 
     it('should submit form', async () => {
         const output = {
-            uid: '1',
+            sic: '1',
             description: 'must work out',
             isCompleted: false,
         };

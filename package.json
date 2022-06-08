@@ -10,7 +10,7 @@
         "check-types": "tsc",
         "lint": "next lint --ignore-path .gitignore",
         "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx)\"",
-        "validate": "npm run check-types && npm run format && npm run lint && npm run build",
+        "validate": "npm run format && npm run lint",
         "test": "jest --watch",
         "tests": "jest",
         "prepare": "husky install"

@@ -10,9 +10,9 @@
         "check-types": "tsc",
         "lint": "next lint --ignore-path .gitignore",
         "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx)\"",
-        "validate": "npm run format && npm run lint",
-        "test": "jest --watch",
-        "tests": "jest",
+        "validate": "npm run format && npm run lint && npm run test && npm run build",
+        "test": "jest -- --coverage",
+        "test:watch": "jest --watch",
         "prepare": "husky install"
     },
     "prisma": {
@@ -49,7 +49,6 @@
         "husky": "^8.0.1",
         "jest": "^28.1.0",
         "jest-environment-jsdom": "^28.1.0",
-        "lint-staged": "^13.0.0",
         "prettier": "^2.6.2",
         "prisma": "^3.14.0",
         "ts-node": "^10.8.1",

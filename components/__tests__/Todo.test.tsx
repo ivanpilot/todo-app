@@ -1,30 +1,32 @@
-import { render as rtlRender, screen } from '@testing-library/react';
+import { MockedProvider } from '@apollo/react-testing';
+import { create, act } from 'react-test-renderer';
+import { render as renderui, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Todo from '../Todo';
-import TodoContext from '../../context/TodoContext';
+import wait from 'waait';
+import { UPDATE_TODO } from '../../graphql/mutations';
 
-function render(ui: JSX.Element, store = {}) {
-    return rtlRender(
-        <TodoContext.Provider value={store}>{ui}</TodoContext.Provider>,
+function rendered(ui: JSX.Element, mocks = []) {
+    return (
+        <MockedProvider mocks={mocks} addTypename={false}>
+            {ui}
+        </MockedProvider>
     );
 }
 
 describe('Todo', () => {
-    const props = {
-        sic: '1',
-        description: 'workout',
-        isCompleted: false,
-    };
+    let props;
 
-    const store = {
-        create: jest.fn(),
-        remove: jest.fn(),
-        update: jest.fn(),
-        todos: { [props.sic]: props },
-    };
+    beforeEach(() => {
+        props = {
+            sic: '1',
+            description: 'workout',
+            isCompleted: false,
+        };
+    });
 
     it('should render a todo', () => {
-        render(<Todo {...props} />);
+        renderui(rendered(<Todo {...props} />));
         const checkbox = screen.getByRole('checkbox');
         const input = screen.getByRole('input');
         const trashIcon = screen.getByRole('button');
@@ -37,7 +39,7 @@ describe('Todo', () => {
 
     it('should update the description of a todo', async () => {
         const updatedDescription = 'should rest';
-        render(<Todo {...props} />, store);
+        renderui(rendered(<Todo {...props} />));
 
         const input = screen.getByRole('input');
         await userEvent.click(input);
@@ -47,27 +49,35 @@ describe('Todo', () => {
         expect(
             screen.getByDisplayValue(updatedDescription),
         ).toBeInTheDocument();
-        //should test when user focus out
     });
 
-    it('should mark the the todo as completed by clicking on the checkbox', async () => {
-        render(<Todo {...props} />, store);
+    it.skip('should mark the the todo as completed by clicking on the checkbox', async () => {
+        let updateMutationCalled = false;
+        const todo = {
+            id: 1,
+            description: 'first todo',
+            isCompleted: true,
+        };
 
-        const checkbox = screen.getByRole('checkbox');
-        await userEvent.click(checkbox);
-        const input = screen.getByRole('input');
-        expect(input).toHaveProperty('disabled', true);
-        expect(store.update).toHaveBeenCalledTimes(1);
-        expect(store.update).toHaveBeenCalledWith(props);
-    });
+        const mock = {
+            request: {
+                query: UPDATE_TODO,
+                variables: todo,
+            },
+            result: () => {
+                updateMutationCalled = true;
+                return { data: { ...todo, isCompleted: false } };
+            },
+        };
 
-    it('should remove a todo from the list', async () => {
-        render(<Todo {...props} />, store);
+        let component;
+        act(() => {
+            component = create(rendered(<Todo {...props} />, [mock]));
+        });
+        const checkbox = component.root.findByProps({ id: 'check' });
+        checkbox.props.onClick();
 
-        const trashIcon = screen.getByRole('button');
-        await userEvent.click(trashIcon);
-        // testing the call to remove as should test the absence of the component from another component
-        expect(store.remove).toHaveBeenCalledTimes(1);
-        expect(store.remove).toHaveBeenCalledWith(props.sic);
+        await wait(0);
+        expect(updateMutationCalled).toBe(true);
     });
 });

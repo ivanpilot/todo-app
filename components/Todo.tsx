@@ -51,6 +51,7 @@ function Todo(props: ITodoFull): JSX.Element {
         <Wrapper>
             <Label>
                 <input
+                    id="check"
                     type="checkbox"
                     onClick={handleOnClick}
                     defaultChecked={todo.isCompleted}
